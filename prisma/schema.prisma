@@ -6,6 +6,37 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Deliveryman {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+
+  @@map("deliveryman")
+  Delivery Delivery[]
+}
+
+model Client {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+
+  Delivery Delivery[]
+  @@map("clients")
+}
+
+model Delivery {
+  id             String      @id @default(uuid())
+  id_client      String
+  client         Client      @relation(fields: [id_client], references: [id])
+  id_deliveryman String
+  deliveryman    Deliveryman @relation(fields: [id_deliveryman], references: [id])
+  item_name      String
+  created_at     DateTime    @default(now())
+  end_at         DateTime    @default(now())
+
+  @@map("deliveries")
 }
